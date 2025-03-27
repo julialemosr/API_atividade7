@@ -12,32 +12,55 @@ spec = FlaskPydanticSpec ( 'flask',
 spec.register(app)
 
 @app.route('/<tipo>/<quantidade>')
-def validado(tipo, quantidade):
-    prazo = int(quantidade)
-    meses = datetime.today()+relativedelta(months=prazo)
-    # years=
-    anos = datetime.today()+relativedelta(years=prazo)
-    # weeks=
-    semanas = datetime.today()+relativedelta(weeks=prazo)
-    # days=
-    dias = datetime.today()+relativedelta(days=prazo)
 
-    if tipo == 'meses':
-        validade = meses
-    elif tipo == 'anos':
-        validade = anos
-    elif tipo == 'semanas':
-        validade = semanas
-    elif tipo == 'dias':
-        validade = dias
+def validade(tipo, quantidade):
+    """
+    #Endpoint:
+    'GET /verificar_data/<ano>-<mes>-<dia>'
 
-    return jsonify({
-        'Fabricação': datetime.today().strftime('%d/%m/%Y'),
-        'Validade': validade.strftime('%d/%m/%Y'),
-    })
+    :param tipo: tipo de tempo(dias,semanas,meses e ano)
+    :param quantidade:  quantidades de tempo de validade até a data de fabricação.
+    :return:
 
+    #Resposta (JSON)
+    {
+            'fabricacao': 10/09/2023,
+            'validade': 31/03/2026,
+        }
 
+    #Erros Possíveis:
+    {"erro": "Valor inválido."}
 
+    """
+
+    try:
+        prazo = int(quantidade)
+        meses = datetime.today()+relativedelta(months=prazo)
+        # years=
+        anos = datetime.today()+relativedelta(years=prazo)
+        # weeks=
+        semanas = datetime.today()+relativedelta(weeks=prazo)
+        # days=
+        dias = datetime.today()+relativedelta(days=prazo)
+
+        if tipo == 'meses':
+            validade = meses
+        elif tipo == 'anos':
+            validade = anos
+        elif tipo == 'semanas':
+            validade = semanas
+        elif tipo == 'dias':
+            validade = dias
+
+        return jsonify({
+            'Fabricacao': datetime.today().strftime('%d/%m/%Y'),
+            'Validade': validade.strftime('%d/%m/%Y'),
+        })
+
+    except ValueError:
+        return jsonify({
+            'erro':'valor inválido'
+        })
 
 
 if __name__ == '__main__':
